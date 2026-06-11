@@ -20,15 +20,22 @@ class FakeCharacterRepository : CharacterRepository {
     var throwOnSave = false
 
     // Datos controlados para los tests
-    var mockCharactersResult: Result<CharacterPaging> = Result.failure(Exception("Not initialized"))
+    var mockCharactersResult: Result<CharacterPaging>? = Result.failure(Exception("Not initialized"))
     val savedLocalCharacters = mutableListOf<Character>()
+
+    fun clear() {
+        mockCharactersResult = null
+        throwOnSave = false
+        saveCharacterCalled = false
+        savedLocalCharacters.clear()
+    }
 
     override suspend fun notifyChange() {
         _repositoryChanges.emit(Unit)
     }
 
     override suspend fun getCharacters(page: Int): Result<CharacterPaging> {
-        return mockCharactersResult
+        return mockCharactersResult ?: Result.failure(Exception("Mock no configurado para este test"))
     }
 
     override suspend fun saveCharacterLocal(character: Character) {
@@ -58,7 +65,7 @@ class FakeCharacterRepository : CharacterRepository {
     }
 
     override suspend fun getCharactersFromDb(page: Int): List<Character> {
-        return mockCharactersResult.getOrNull()?.characters?.toList() ?: emptyList()
+        return mockCharactersResult?.getOrNull()?.characters?.toList() ?: emptyList()
     }
 
     override suspend fun syncPage(page: Int) {
