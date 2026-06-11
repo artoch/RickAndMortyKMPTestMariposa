@@ -13,9 +13,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.toch.rickmortytest.domain.model.Character
-import org.toch.rickmortytest.presentation.screen.character.remote.item.CharacterItem
-import org.toch.rickmortytest.presentation.screen.characterdetail.CharacterDetailContent
-import org.toch.rickmortytest.presentation.screen.characterdetail.CharacterDetailScreen
+import org.toch.rickmortytest.presentation.screen.characterdetail.container.CharacterDetailContent
 import org.toch.rickmortytest.presentation.viewmodel.characterdetail.CharacterDetailState
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -49,7 +47,8 @@ class CharacterDetailTest {
                     character = null,
                     errorMessage = null
                 ),
-                onNavigateBack = {}
+                onNavigateBack = {},
+                retry = {}
             )
         }
         onNodeWithText("Rick Sanchez").assertDoesNotExist()
@@ -75,7 +74,8 @@ class CharacterDetailTest {
                     ),
                     errorMessage = null
                 ),
-                onNavigateBack = {}
+                onNavigateBack = {},
+                retry = {}
             )
         }
         onAllNodesWithText("Rick Sanchez").assertCountEquals(2)
