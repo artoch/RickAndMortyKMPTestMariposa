@@ -356,7 +356,7 @@ fun CharacterDetailContainer(state: CharacterDetailState) {
                     }
 
                     Text(
-                        text = "Last known location:",
+                        text = stringResource(Res.string.character_detail_screen_location),
                         style = MaterialTheme.typography.labelSmall.copy(
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.SemiBold

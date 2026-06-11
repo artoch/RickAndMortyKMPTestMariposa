@@ -42,8 +42,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import org.jetbrains.compose.resources.stringResource
 import org.toch.rickmortytest.domain.model.Character
 import org.toch.rickmortytest.presentation.utils.statusColor
+import rickandmortytest.shared.generated.resources.Res
+import rickandmortytest.shared.generated.resources.character_detail_screen_location_unknown
 
 @Composable
 fun CharacterItem(
@@ -169,7 +172,7 @@ fun CharacterItem(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Last known location",
+                    text = stringResource(Res.string.character_detail_screen_location_unknown),
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp

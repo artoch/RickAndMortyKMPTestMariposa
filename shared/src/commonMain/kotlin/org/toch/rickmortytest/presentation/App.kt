@@ -17,16 +17,14 @@ import org.toch.rickmortytest.presentation.navigation.GlobalNavController
 import org.toch.rickmortytest.presentation.navigation.Screen
 import org.toch.rickmortytest.presentation.screen.characterdetail.CharacterDetailScreen
 import org.toch.rickmortytest.presentation.screen.home.HomeScreen
+import org.toch.rickmortytest.presentation.screen.splash.SplashScreen
 import org.toch.rickmortytest.theme.AppTheme
 
 
 @Composable
 @Preview
 fun App() {
-    AppTheme(
-        dynamicColor = false,
-        darkTheme = true
-    ) {
+    AppTheme {
 
         setSingletonImageLoaderFactory { context ->
             ImageLoader.Builder(context)
@@ -45,8 +43,11 @@ fun App() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = Screen.Home
+                    startDestination = Screen.Splash
                 ) {
+                    composable<Screen.Splash> {
+                        SplashScreen()
+                    }
                     composable<Screen.Home> {
                         HomeScreen()
                     }
