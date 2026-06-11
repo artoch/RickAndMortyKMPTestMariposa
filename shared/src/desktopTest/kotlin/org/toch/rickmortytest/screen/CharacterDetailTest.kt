@@ -32,6 +32,7 @@ class CharacterDetailTest {
 
     @AfterTest
     fun tearDown() {
+        //TEST ----
         // 🧹 2. Limpiamos el hilo principal al terminar para no ensuciar otros tests
         Dispatchers.resetMain()
     }
