@@ -154,7 +154,7 @@ También puedes usar la configuración de ejecución `androidApp` directamente d
 El proyecto incluye pruebas unitarias de lógica de negocio, integración con Koin y pruebas de interfaz de usuario con captura de pantalla (**Screenshot Testing**) usando **Roborazzi**.
 
 ```bash
-# Pruebas en Android (Robolectric + Roborazzi)
+# Pruebas en Android
 ./gradlew :shared:testAndroidHostTest
 
 # Pruebas en iOS Simulator
