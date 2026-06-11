@@ -25,3 +25,6 @@ jobs:
 
       - name: Run tests include viewmodel and sqldelight
         run: ./gradlew :shared:testAndroidHostTest
+
+      - name: Run ui compose tests
+        run: ./gradlew :shared:desktopTest

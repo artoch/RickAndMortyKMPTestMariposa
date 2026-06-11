@@ -1,8 +1,7 @@
-package org.toch.rickmortytest.presentation.screen.character.remote.paging
+package org.toch.rickmortytest.domain.model
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import org.toch.rickmortytest.domain.model.Character
 import org.toch.rickmortytest.domain.repository.CharacterRepository
 
 class CharacterPagingSource(

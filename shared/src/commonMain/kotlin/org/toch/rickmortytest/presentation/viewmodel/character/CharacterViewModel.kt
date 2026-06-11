@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.toch.rickmortytest.domain.model.Character
 import org.toch.rickmortytest.domain.repository.CharacterRepository
-import org.toch.rickmortytest.presentation.screen.character.remote.paging.CharacterPagingSource
+import org.toch.rickmortytest.domain.model.CharacterPagingSource
 import org.toch.rickmortytest.presentation.viewmodel.viewmodelbehavior.CharacterEffectProvider
 
 class CharacterViewModel(

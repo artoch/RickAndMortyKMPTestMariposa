@@ -88,7 +88,6 @@ class CharacterRepositoryImpl(
             .getCharactersByPage(page.toLong())
             .executeAsList()
             .map {
-
                 Character(
                     id = it.id.toInt(),
                     name = it.name,
