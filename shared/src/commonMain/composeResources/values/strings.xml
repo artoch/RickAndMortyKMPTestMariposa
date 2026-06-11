@@ -8,6 +8,10 @@
     <string name="character_screen_title">Characters</string>
     <!--endregion-->
 
+    <!--Others-->
+    <string name="retry">Retry</string>
+    <!--endregion-->
+
     <!--LocalCharacterContainer-->
     <string name="local_character_screen_title">Favorites</string>
     <!--endregion-->

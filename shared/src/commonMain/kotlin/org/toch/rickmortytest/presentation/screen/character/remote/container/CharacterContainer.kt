@@ -33,6 +33,7 @@ import org.toch.rickmortytest.presentation.screen.character.component.CharacterI
 import org.toch.rickmortytest.presentation.screen.character.remote.item.CharacterItem
 import rickandmortytest.shared.generated.resources.Res
 import rickandmortytest.shared.generated.resources.character_screen_title
+import rickandmortytest.shared.generated.resources.retry
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,6 +97,7 @@ fun CharacterContainer(
                         contentAlignment = Alignment.Center
                     ) {
                         Column(
+                            modifier = Modifier.padding(16.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
@@ -109,7 +111,7 @@ fun CharacterContainer(
                                     lazyCharacters.retry()
                                 }
                             ) {
-                                Text("Reintentar")
+                                Text(stringResource(Res.string.retry))
                             }
                         }
                     }

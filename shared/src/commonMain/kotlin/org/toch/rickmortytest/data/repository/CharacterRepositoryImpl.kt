@@ -125,6 +125,8 @@ class CharacterRepositoryImpl(
 
             }
 
+        }.onFailure {exception ->
+            throw exception
         }
 
     }
