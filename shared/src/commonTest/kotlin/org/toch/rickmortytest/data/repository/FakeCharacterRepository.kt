@@ -5,10 +5,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flowOf
+import org.toch.rickmortytest.data.model.CharacterTestData.mockCharactersList
 import org.toch.rickmortytest.domain.model.Character
 import org.toch.rickmortytest.domain.model.CharacterPaging
 import org.toch.rickmortytest.domain.repository.CharacterRepository
-
 class FakeCharacterRepository : CharacterRepository {
 
     // Simula la emisión de cambios de la DB
@@ -22,6 +22,8 @@ class FakeCharacterRepository : CharacterRepository {
     // Datos controlados para los tests
     var mockCharactersResult: Result<CharacterPaging>? = Result.failure(Exception("Not initialized"))
     val savedLocalCharacters = mutableListOf<Character>()
+
+    var resultToBeReturned: Result<Character> = Result.success(mockCharactersList.first())
 
     fun clear() {
         mockCharactersResult = null
@@ -52,7 +54,7 @@ class FakeCharacterRepository : CharacterRepository {
     }
 
     override suspend fun getCharacter(id: Int): Result<Character> {
-        TODO("Not implemented")
+        return resultToBeReturned
     }
 
     override fun getLocalCharacters(): Flow<List<Character>> {
