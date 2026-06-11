@@ -28,12 +28,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import org.toch.rickmortytest.presentation.model.NavigationBottomBarItemModel
 import org.toch.rickmortytest.presentation.navigation.Screen
 import org.toch.rickmortytest.presentation.screen.character.component.CharacterSnackBar
 import org.toch.rickmortytest.presentation.screen.character.local.LocalCharacterScreen
 import org.toch.rickmortytest.presentation.screen.character.remote.CharacterScreen
 import org.toch.rickmortytest.theme.AppTheme
+import rickandmortytest.shared.generated.resources.Res
+import rickandmortytest.shared.generated.resources.home_screen_characters
+import rickandmortytest.shared.generated.resources.home_screen_fav
 
 @Composable
 fun HomeScreen() {
@@ -51,12 +55,12 @@ fun HomeScreen() {
     val items = listOf(
         NavigationBottomBarItemModel(
             icon = Icons.Default.Person,
-            label = "Character",//stringResource(Res.string.home_screen_characters),
+            label = stringResource(Res.string.home_screen_characters),
             route = Screen.Characters
         ),
         NavigationBottomBarItemModel(
             icon = Icons.Filled.FavoriteBorder,
-            label = "Saved",//stringResource(Res.string.home_screen_locations),
+            label = stringResource(Res.string.home_screen_fav),
             route = Screen.Saved
         ),
     )

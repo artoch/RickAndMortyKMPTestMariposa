@@ -53,6 +53,10 @@ import org.toch.rickmortytest.presentation.screen.characterdetail.preview.Charac
 import org.toch.rickmortytest.presentation.utils.statusColor
 import org.toch.rickmortytest.presentation.viewmodel.characterdetail.CharacterDetailState
 import org.toch.rickmortytest.presentation.viewmodel.characterdetail.CharacterDetailViewModel
+import rickandmortytest.shared.generated.resources.Res
+import rickandmortytest.shared.generated.resources.character_detail_screen_gender
+import rickandmortytest.shared.generated.resources.character_detail_screen_location
+import rickandmortytest.shared.generated.resources.character_detail_screen_species
 
 @Composable
 fun CharacterDetailScreen() {
@@ -204,17 +208,17 @@ private fun CharacterDetail(character: Character) {
         ) {
             InfoCard(
                 icon = Icons.Default.Transgender,
-                title = "",//stringResource(Res.string.character_detail_screen_gender),
+                title = stringResource(Res.string.character_detail_screen_gender),
                 description = character.gender,
             )
             InfoCard(
                 icon = Icons.Default.Person,
-                title = "",//stringResource(Res.string.character_detail_screen_species),
+                title = stringResource(Res.string.character_detail_screen_species),
                 description = character.species,
             )
             InfoCard(
                 icon = Icons.Default.LocationOn,
-                title = "",//stringResource(Res.string.character_detail_screen_location),
+                title = stringResource(Res.string.character_detail_screen_location),
                 description = character.location,
             )
         }
