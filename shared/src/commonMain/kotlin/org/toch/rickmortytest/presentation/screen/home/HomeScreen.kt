@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.MonitorHeart
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -31,10 +29,8 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.toch.rickmortytest.presentation.model.NavigationBottomBarItemModel
 import org.toch.rickmortytest.presentation.navigation.Screen
-import org.toch.rickmortytest.presentation.screen.character.component.CharacterSnackBar
 import org.toch.rickmortytest.presentation.screen.character.local.LocalCharacterScreen
 import org.toch.rickmortytest.presentation.screen.character.remote.CharacterScreen
-import org.toch.rickmortytest.theme.AppTheme
 import rickandmortytest.shared.generated.resources.Res
 import rickandmortytest.shared.generated.resources.home_screen_characters
 import rickandmortytest.shared.generated.resources.home_screen_fav
