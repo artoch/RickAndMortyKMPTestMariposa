@@ -19,6 +19,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Transgender
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,21 +39,30 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.Role.Companion.Button
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.toch.rickmortytest.domain.model.Character
+import org.toch.rickmortytest.presentation.screen.characterdetail.container.CharacterDetailContent
 import org.toch.rickmortytest.presentation.screen.characterdetail.observe.CharacterDetailObserver
 import org.toch.rickmortytest.presentation.screen.characterdetail.preview.CharacterDetailStateParameterProvider
 import org.toch.rickmortytest.presentation.utils.statusColor
 import org.toch.rickmortytest.presentation.viewmodel.characterdetail.CharacterDetailState
 import org.toch.rickmortytest.presentation.viewmodel.characterdetail.CharacterDetailViewModel
+import rickandmortytest.shared.generated.resources.Res
+import rickandmortytest.shared.generated.resources.character_detail_screen_gender
+import rickandmortytest.shared.generated.resources.character_detail_screen_location
+import rickandmortytest.shared.generated.resources.character_detail_screen_species
+import rickandmortytest.shared.generated.resources.home_screen_characters
+import rickandmortytest.shared.generated.resources.retry
 
 @Composable
 fun CharacterDetailScreen() {
@@ -66,207 +76,14 @@ fun CharacterDetailScreen() {
     CharacterDetailContent(
         state = state,
         onNavigateBack = viewModel::navigateBack,
+        retry = {
+            viewModel.getCharacter()
+        },
         modifier = Modifier.fillMaxSize()
     )
 }
 
-@Composable
-fun CharacterDetailContent(
-    state: CharacterDetailState,
-    onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Scaffold(
-        topBar = {
-            CharacterDetailTopBar(
-                title = state.character?.name.orEmpty(),
-                onNavigateBack = onNavigateBack,
-            )
-        },
-        modifier = modifier,
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-        ) {
-            if (state.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                )
-            }
-            state.character?.let { character ->
-                CharacterDetail(character = character)
-            }
-            state.errorMessage?.let { message ->
-                Text(
-                    message,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(16.dp),
-                )
-            }
-        }
-    }
-}
 
-@Composable
-private fun CharacterDetailTopBar(
-    title: String,
-    onNavigateBack: () -> Unit,
-) {
-    TopAppBar(
-        title = {
-            Text(
-                color = MaterialTheme.colorScheme.onSurface,
-                text = title,
-                fontWeight = FontWeight.Bold,
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = onNavigateBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "",//stringResource(Res.string.character_detail_screen_toolbar_back_navigation),
-                )
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background,
-        ),
-    )
-}
-
-@Composable
-private fun CharacterDetail(character: Character) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(350.dp),
-        ) {
-            AsyncImage(
-                model = character.image,
-                contentDescription = character.name,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-            )
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomStart)
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                MaterialTheme.colorScheme.onSurface,
-                            ),
-                        ),
-                    ).padding(24.dp),
-            ) {
-                Text(
-                    text = character.name,
-                    color = MaterialTheme.colorScheme.surface,
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp),
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(14.dp)
-                            .clip(CircleShape)
-                            .background(character.statusColor()),
-                    )
-                    Text(
-                        text = "${character.status} - ${character.species}",
-                        color = MaterialTheme.colorScheme.surface,
-                        fontSize = 16.sp,
-                        modifier = Modifier.padding(start = 6.dp),
-                    )
-                }
-            }
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            InfoCard(
-                icon = Icons.Default.Transgender,
-                title = "",//stringResource(Res.string.character_detail_screen_gender),
-                description = character.gender,
-            )
-            InfoCard(
-                icon = Icons.Default.Person,
-                title = "",//stringResource(Res.string.character_detail_screen_species),
-                description = character.species,
-            )
-            InfoCard(
-                icon = Icons.Default.LocationOn,
-                title = "",//stringResource(Res.string.character_detail_screen_location),
-                description = character.location,
-            )
-        }
-    }
-}
-
-@Composable
-private fun InfoCard(
-    icon: ImageVector,
-    title: String,
-    description: String,
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onSurface,
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(32.dp),
-            )
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 16.dp),
-            ) {
-                Text(
-                    text = title,
-                    color = MaterialTheme.colorScheme.surface,
-                    fontSize = 14.sp,
-                )
-                Text(
-                    text = description,
-                    color = MaterialTheme.colorScheme.surface,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
-        }
-    }
-}
 
 @Composable
 fun CharacterDetailContainer(state: CharacterDetailState) {
@@ -352,7 +169,7 @@ fun CharacterDetailContainer(state: CharacterDetailState) {
                     }
 
                     Text(
-                        text = "Last known location:",
+                        text = stringResource(Res.string.character_detail_screen_location),
                         style = MaterialTheme.typography.labelSmall.copy(
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.SemiBold

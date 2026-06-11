@@ -5,10 +5,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flowOf
+import org.toch.rickmortytest.data.model.CharacterTestData.mockCharactersList
 import org.toch.rickmortytest.domain.model.Character
 import org.toch.rickmortytest.domain.model.CharacterPaging
 import org.toch.rickmortytest.domain.repository.CharacterRepository
-
 class FakeCharacterRepository : CharacterRepository {
 
     // Simula la emisión de cambios de la DB
@@ -20,15 +20,24 @@ class FakeCharacterRepository : CharacterRepository {
     var throwOnSave = false
 
     // Datos controlados para los tests
-    var mockCharactersResult: Result<CharacterPaging> = Result.failure(Exception("Not initialized"))
+    var mockCharactersResult: Result<CharacterPaging>? = Result.failure(Exception("Not initialized"))
     val savedLocalCharacters = mutableListOf<Character>()
+
+    var resultToBeReturned: Result<Character> = Result.success(mockCharactersList.first())
+
+    fun clear() {
+        mockCharactersResult = null
+        throwOnSave = false
+        saveCharacterCalled = false
+        savedLocalCharacters.clear()
+    }
 
     override suspend fun notifyChange() {
         _repositoryChanges.emit(Unit)
     }
 
     override suspend fun getCharacters(page: Int): Result<CharacterPaging> {
-        return mockCharactersResult
+        return mockCharactersResult ?: Result.failure(Exception("Mock no configurado para este test"))
     }
 
     override suspend fun saveCharacterLocal(character: Character) {
@@ -45,7 +54,7 @@ class FakeCharacterRepository : CharacterRepository {
     }
 
     override suspend fun getCharacter(id: Int): Result<Character> {
-        TODO("Not implemented")
+        return resultToBeReturned
     }
 
     override fun getLocalCharacters(): Flow<List<Character>> {
@@ -58,7 +67,7 @@ class FakeCharacterRepository : CharacterRepository {
     }
 
     override suspend fun getCharactersFromDb(page: Int): List<Character> {
-        return mockCharactersResult.getOrNull()?.characters?.toList() ?: emptyList()
+        return mockCharactersResult?.getOrNull()?.characters?.toList() ?: emptyList()
     }
 
     override suspend fun syncPage(page: Int) {

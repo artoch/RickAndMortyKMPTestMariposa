@@ -13,6 +13,9 @@ plugins {
 }
 
 kotlin {
+
+    jvm("desktop")
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -130,6 +133,17 @@ kotlin {
                 implementation(libs.koin.test.junit4)
 
                 implementation(libs.sqldelight.sqlite.driver)
+            }
+        }
+        val desktopMain by getting {
+            dependencies {
+                // El driver oficial de SQLDelight para sistemas de escritorio (JDBC)
+                implementation(libs.sqldelight.sqlite.driver)
+            }
+        }
+        val desktopTest by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
             }
         }
     }

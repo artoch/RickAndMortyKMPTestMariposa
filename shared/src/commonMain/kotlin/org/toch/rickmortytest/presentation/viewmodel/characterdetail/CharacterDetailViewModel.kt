@@ -24,11 +24,9 @@ class CharacterDetailViewModel(
         "Character id is required"
     }
 
-    // 1. Estado de la pantalla (Reemplaza a reduce)
     private val _state = MutableStateFlow(CharacterDetailState())
     val state: StateFlow<CharacterDetailState> = _state.asStateFlow()
 
-    // 2. Canal para Efectos Secundarios (Reemplaza a postSideEffect)
     private val _sideEffect = Channel<CharacterDetailSideEffect>()
     val sideEffect = _sideEffect.receiveAsFlow()
 
@@ -36,7 +34,7 @@ class CharacterDetailViewModel(
         getCharacter()
     }
 
-    private fun getCharacter() {
+    fun getCharacter() {
         viewModelScope.launch {
             // Marcamos el estado de carga inicial
             _state.update { it.copy(isLoading = true) }

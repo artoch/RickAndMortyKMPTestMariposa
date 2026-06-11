@@ -21,8 +21,6 @@ fun CharacterScreen(showSnackBar: (String) -> Unit) {
 
     val lazyCharacters = viewModel.charactersFlow.collectAsLazyPagingItems()
 
-    // Mapa local de overrides: id -> isFavorite
-    // Cambia solo la entrada del item presionado sin recargar la lista
     val favoriteOverrides by viewModel.favoriteOverrides.collectAsState()
 
     CharacterObserver(viewModel) { sideEffect ->

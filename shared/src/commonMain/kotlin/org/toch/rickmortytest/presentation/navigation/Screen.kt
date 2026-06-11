@@ -4,6 +4,8 @@ import kotlinx.serialization.Serializable
 sealed class Screen {
 
     @Serializable
+    object Splash : Screen()
+    @Serializable
     object Home : Screen()
 
     @Serializable
