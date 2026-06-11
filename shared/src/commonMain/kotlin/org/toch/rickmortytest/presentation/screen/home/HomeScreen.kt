@@ -98,7 +98,7 @@ fun HomeScreen() {
         NavHost(
             navController = navController,
             startDestination = Screen.Characters,
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding())
         ) {
             composable<Screen.Characters> {
                 CharacterScreen { message ->

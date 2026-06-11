@@ -5,6 +5,7 @@ import org.koin.dsl.module
 import org.toch.rickmortytest.presentation.viewmodel.character.CharacterViewModel
 import org.toch.rickmortytest.presentation.viewmodel.characterdetail.CharacterDetailViewModel
 import org.toch.rickmortytest.presentation.viewmodel.localcharacter.LocalCharacterViewModel
+import org.toch.rickmortytest.presentation.viewmodel.splash.SplashViewModel
 
 val viewModelModule = module {
     viewModel { CharacterViewModel(get()) }
@@ -15,4 +16,5 @@ val viewModelModule = module {
         )
     }
     viewModel { LocalCharacterViewModel(get()) }
+    viewModel { SplashViewModel() }
 }

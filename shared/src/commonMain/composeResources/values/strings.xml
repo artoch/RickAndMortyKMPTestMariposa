@@ -4,8 +4,17 @@
     <string name="home_screen_fav">Favorites</string>
     <!--endregion-->
 
+    <!--CharacterContainer-->
+    <string name="character_screen_title">Characters</string>
+    <!--endregion-->
+
+    <!--LocalCharacterContainer-->
+    <string name="local_character_screen_title">Favorites</string>
+    <!--endregion-->
+
     <!--region Character Detail Screen-->
     <string name="character_detail_screen_gender">Gender</string>
+    <string name="character_detail_screen_location_unknown">Last known location</string>
     <string name="character_detail_screen_species">Species</string>
     <string name="character_detail_screen_location">Last Know Location</string>
     <string name="character_detail_screen_toolbar_back_navigation">Boton hacia atras</string>
