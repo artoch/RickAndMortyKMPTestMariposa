@@ -10,6 +10,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
+//add text to trigger again ci
 class RickAndMortyApiTest {
 
     // 1. Simulamos el JSON exacto que devolvería la API de Rick y Morty
