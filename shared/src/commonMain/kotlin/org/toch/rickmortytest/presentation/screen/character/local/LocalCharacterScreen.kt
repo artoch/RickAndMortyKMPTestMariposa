@@ -13,8 +13,9 @@ fun LocalCharacterScreen(showSnackBar: (String) -> Unit) {
 
     val viewModel = koinViewModel<LocalCharacterViewModel>()
 
-
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
 
     CharacterObserver(viewModel) {
@@ -23,6 +24,8 @@ fun LocalCharacterScreen(showSnackBar: (String) -> Unit) {
 
     LocalCharacterContainer(
         state = state,
+        searchQuery = searchQuery,
+        onSearchQueryChange = viewModel::onSearchQueryChanged,
         onCharacterClick = viewModel::onCharacterClicked,
         onRemoveFavorite = { character -> viewModel.removeFromFavorites(character) }
     )

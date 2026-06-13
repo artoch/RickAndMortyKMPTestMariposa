@@ -23,6 +23,13 @@ interface CharacterRepository {
         page:Int
     ): List<Character>
 
+    suspend fun getCharactersFromDb(
+        name:String
+    ): List<Character>
+
+    suspend fun searchLikeCharacterByNameDb(name: String): Flow<List<Character>>
+    suspend fun syncSearchByName(page:Int,name: String)
+
     suspend fun syncPage(
         page:Int
     )
