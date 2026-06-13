@@ -9,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -26,11 +27,15 @@ fun SplashScreen() {
 
     val viewModel = koinViewModel<SplashViewModel>()
 
-    val isReady by viewModel.isReady.collectAsState()
+    val isReady by viewModel.isReady.collectAsStateWithLifecycle()
 
     LaunchedEffect(isReady) {
         if (isReady) {
-            navController.navigate(Screen.Home)
+            navController.navigate(Screen.Home) {
+                popUpTo(Screen.Splash) {
+                    inclusive = true
+                }
+            }
         }
     }
 
