@@ -11,6 +11,20 @@ CREATE TABLE CharacterEntity (
     isFavorite INTEGER NOT NULL DEFAULT 0
 );
 
+CREATE VIRTUAL TABLE CharacterSearchIndex USING fts4(
+    name,
+    content='CharacterEntity'
+);
+
+CREATE TRIGGER character_before_insert BEFORE INSERT ON CharacterEntity BEGIN
+    DELETE FROM CharacterSearchIndex WHERE rowid = new.id;
+END;
+
+CREATE TRIGGER character_after_insert AFTER INSERT ON CharacterEntity BEGIN
+    INSERT INTO CharacterSearchIndex (rowid, name)
+    VALUES (new.id, new.name);
+END;
+
 -- Query para guardar o actualizar un personaje
 insertCharacter:
 INSERT OR REPLACE INTO CharacterEntity(id, page, name, status, species, gender, location, type, imageUrl, isFavorite)
@@ -35,3 +49,19 @@ DELETE FROM CharacterEntity WHERE id = ?;
 
 isCharacterFavorite:
 SELECT COUNT(*) FROM CharacterEntity WHERE id = :id;
+
+searchAllCharacter:
+SELECT CharacterEntity.* FROM CharacterEntity
+JOIN CharacterSearchIndex ON CharacterEntity.id = CharacterSearchIndex.rowid
+WHERE CharacterSearchIndex MATCH :query;
+
+searchLikeCharacter:
+SELECT CharacterEntity.* FROM CharacterEntity
+JOIN CharacterSearchIndex ON CharacterEntity.id = CharacterSearchIndex.rowid
+WHERE CharacterSearchIndex MATCH :query
+AND CharacterEntity.isFavorite = :isFavorite;
+
+getCharacterFavoriteStatus:
+SELECT isFavorite
+FROM CharacterEntity
+WHERE id = ?;
