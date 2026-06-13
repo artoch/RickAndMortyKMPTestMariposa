@@ -14,6 +14,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class CharacterRepositoryImpl(
     private val api: RickAndMortyApi,
@@ -80,6 +81,8 @@ class CharacterRepositoryImpl(
         notifyChange()
     }
 
+    // TODO: Manejo de data sync por endpoint solo con page
+
     override suspend fun getCharactersFromDb(
         page:Int
     ): List<Character> {
@@ -110,6 +113,12 @@ class CharacterRepositoryImpl(
 
             it.results.forEach { character ->
 
+                val localFavoriteStatus = queries
+                    .getCharacterFavoriteStatus(id = character.id.toLong())
+                    .executeAsOneOrNull()
+
+                val currentFavoriteValue = localFavoriteStatus ?: 0L
+
                 queries.insertCharacter(
                     id = character.id.toLong(),
                     page = page.toLong(),
@@ -120,7 +129,7 @@ class CharacterRepositoryImpl(
                     location = character.location.name,
                     type = character.type,
                     imageUrl = character.image,
-                    isFavorite = 0
+                    isFavorite = currentFavoriteValue
                 )
 
             }
@@ -129,6 +138,95 @@ class CharacterRepositoryImpl(
             throw exception
         }
 
+    }
+
+    // TODO: Manejo de character por nombre y pagina
+
+    override suspend fun getCharactersFromDb(
+        name:String
+    ): List<Character> {
+        val formattedQuery = name.trim().split(" ").joinToString(" ") { "$it*" }
+
+        return withContext(Dispatchers.IO) {
+            queries.searchAllCharacter(
+                query = formattedQuery
+            )
+                .executeAsList() // 💡 Aquí está el secreto: devuelve la lista inmediatamente
+                .map { entity ->
+                    Character(
+                        id = entity.id.toInt(),
+                        name = entity.name,
+                        status = entity.status,
+                        species = entity.species,
+                        gender = entity.gender,
+                        location = entity.location,
+                        type = entity.type,
+                        image = entity.imageUrl,
+                        isFavorite = entity.isFavorite == 1L
+                    )
+                }
+        }
+    }
+
+
+    override suspend fun syncSearchByName(page: Int, name: String) {
+
+        api.getCharacters(page, name).onSuccess {
+
+            it.results.forEach { character ->
+
+                val localFavoriteStatus = queries
+                    .getCharacterFavoriteStatus(id = character.id.toLong())
+                    .executeAsOneOrNull()
+
+                val currentFavoriteValue = localFavoriteStatus ?: 0L
+
+                queries.insertCharacter(
+                    id = character.id.toLong(),
+                    page = page.toLong(),
+                    name = character.name,
+                    status = character.status,
+                    species = character.species,
+                    gender = character.gender,
+                    location = character.location.name,
+                    type = character.type,
+                    imageUrl = character.image,
+                    isFavorite = currentFavoriteValue
+                )
+
+            }
+
+        }.onFailure {exception ->
+            throw exception
+        }
+
+    }
+
+    override suspend fun searchLikeCharacterByNameDb(name: String): Flow<List<Character>> {
+        val formattedQuery = name.trim().split(" ").joinToString(" ") { "$it*" }
+
+        return queries
+            .searchLikeCharacter(
+                query = formattedQuery,
+                isFavorite = 1L
+            )
+            .asFlow()
+            .mapToList(Dispatchers.IO)
+            .map { entityList ->
+                entityList.map { entity ->
+                    Character(
+                        id = entity.id.toInt(),
+                        name = entity.name,
+                        status = entity.status,
+                        species = entity.species,
+                        gender = entity.gender,
+                        location = entity.location,
+                        type = entity.type,
+                        image = entity.imageUrl,
+                        isFavorite = entity.isFavorite == 1L
+                    )
+                }
+            }
     }
 
     // 3. ELIMINAR PERSONAJE DE LA BASE DE DATOS

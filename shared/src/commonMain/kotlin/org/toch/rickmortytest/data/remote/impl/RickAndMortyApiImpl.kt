@@ -23,6 +23,14 @@ class RickAndMortyApiImpl(
             }
         }
 
+    override suspend fun getCharacters(page: Int, name: String): Result<CharacterResponse> =
+        safeApiCall {
+            httpClient.get("character") {
+                parameter("page", page)
+                parameter("name", name)
+            }
+        }
+
     override suspend fun getCharacter(id: Int): Result<CharacterResponse.CharacterData> =
         safeApiCall {
             httpClient.get("character/$id")

@@ -10,6 +10,7 @@
 
     <!--Others-->
     <string name="retry">Retry</string>
+    <string name="search_bar">Search character...</string>
     <!--endregion-->
 
     <!--LocalCharacterContainer-->

@@ -70,6 +70,32 @@ class FakeCharacterRepository : CharacterRepository {
         return mockCharactersResult?.getOrNull()?.characters?.toList() ?: emptyList()
     }
 
+    override suspend fun getCharactersFromDb(name: String): List<Character> {
+        val allCharacters = mockCharactersResult?.getOrNull()?.characters?.toList() ?: emptyList()
+        return if (name.isBlank()) {
+            allCharacters
+        } else {
+            allCharacters.filter { character ->
+                character.name.contains(name, ignoreCase = true)
+            }
+        }
+    }
+
+    override suspend fun searchLikeCharacterByNameDb(name: String): Flow<List<Character>> {
+        val filteredList = if (name.isBlank()) {
+            savedLocalCharacters
+        } else {
+            savedLocalCharacters.filter { character ->
+                character.name.contains(name, ignoreCase = true)
+            }
+        }
+        return flowOf(filteredList)
+    }
+
+    override suspend fun syncSearchByName(page: Int, name: String) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun syncPage(page: Int) {
         TODO("Not yet implemented")
     }

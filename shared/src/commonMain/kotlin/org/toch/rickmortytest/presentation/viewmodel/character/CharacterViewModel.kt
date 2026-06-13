@@ -6,11 +6,15 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,7 +27,11 @@ class CharacterViewModel(
     private val characterRepository: CharacterRepository,
 ) : ViewModel(), CharacterEffectProvider {
 
+    private val _sideEffect = Channel<CharacterSideEffect>()
+    override val sideEffect = _sideEffect.receiveAsFlow()
     private var characterPagingSource: CharacterPagingSource? = null
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     private val _favoriteOverrides = MutableStateFlow<Map<Int, Boolean>>(emptyMap())
     val favoriteOverrides: StateFlow<Map<Int, Boolean>> = _favoriteOverrides.asStateFlow()
@@ -43,12 +51,28 @@ class CharacterViewModel(
         }
     }
 
-    val charactersFlow = Pager(
-        config = PagingConfig(pageSize = 20),
-        pagingSourceFactory = {
-            CharacterPagingSource(characterRepository).also { characterPagingSource = it }
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    val charactersFlow = _searchQuery
+        .debounce(300) // 💡 Espera 300ms para evitar recrear el Pager de forma abrupta si el usuario escribe rápido
+        .flatMapLatest { query ->
+            Pager(
+                config = PagingConfig(
+                    pageSize = 20,
+                    enablePlaceholders = false
+                ),
+                pagingSourceFactory = {
+                    CharacterPagingSource(
+                        characterRepository = characterRepository,
+                        query = query // 💡 Le pasamos el texto actual al PagingSource
+                    ).also { characterPagingSource = it }
+                }
+            ).flow
         }
-    ).flow.cachedIn(viewModelScope)
+        .cachedIn(viewModelScope)
+
+    fun onSearchQueryChanged(newQuery: String) {
+        _searchQuery.value = newQuery
+    }
 
     fun toggleFavorite(character: Character) {
         val newFavoriteState = !character.isFavorite
@@ -79,9 +103,6 @@ class CharacterViewModel(
             }
         }
     }
-
-    private val _sideEffect = Channel<CharacterSideEffect>()
-    override val sideEffect = _sideEffect.receiveAsFlow()
 
     fun onCharacterClicked(id: Int) {
         viewModelScope.launch {

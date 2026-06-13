@@ -7,6 +7,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.resetMain
@@ -116,6 +117,7 @@ class CharacterViewModelTest : KoinTest {
         assertEquals(1, fakeRepository.savedLocalCharacters.size)
         collectJob.cancel()
     }
+
     @Test
     fun `add character and delete item`() = runTest(testDispatcher) {
         // GIVEN: Inicializamos el PagingSource cargando datos para que deje de ser nulo internamente
@@ -133,5 +135,29 @@ class CharacterViewModelTest : KoinTest {
         assertTrue(fakeRepository.savedLocalCharacters.isNotEmpty())
         assertEquals(1, fakeRepository.savedLocalCharacters.size)
         collectJob.cancel()
+    }
+
+    @Test
+    fun `Search Character From DB successfully with debounce`() = runTest(testDispatcher) {
+        // GIVEN: Cargamos datos de prueba en el repositorio Fake
+        fakeRepository.mockCharactersResult = Result.success(CharacterTestData.mockPagingPage1)
+
+        // WHEN: El usuario escribe en la barra de búsqueda
+        viewModel.onSearchQueryChanged("Rick")
+
+        // ⏱️ ¡EL PASO CLAVE!: Avanzamos el reloj virtual para superar el .debounce(300) del ViewModel
+        advanceTimeBy(301)
+        // O puedes usar advanceUntilIdle() para procesar todo lo pendiente en la cola del Dispatcher
+        advanceUntilIdle()
+
+        // Tomamos la captura de la lista paginada recreada por el flatMapLatest
+        val items: List<Character> = viewModel.charactersFlow.asSnapshot()
+
+        // THEN: Validamos que la lista se filtró correctamente según la lógica de tu FakeRepository
+        // Nota: Ajusta los asserts al tamaño exacto de elementos devueltos por el filtro de tu Fake
+        assertTrue(items.isNotEmpty())
+        assertTrue(items.all { it.name.contains("Rick", ignoreCase = true) })
+        assertEquals("Rick Sanchez", items[0].name)
+        assertEquals(1, items.count())
     }
 }

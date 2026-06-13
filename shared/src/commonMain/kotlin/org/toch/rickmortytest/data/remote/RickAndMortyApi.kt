@@ -5,5 +5,7 @@ import org.toch.rickmortytest.data.dto.CharacterResponse
 interface RickAndMortyApi {
     suspend fun getCharacters(page: Int): Result<CharacterResponse>
 
+    suspend fun getCharacters(page: Int, name: String): Result<CharacterResponse>
+
     suspend fun getCharacter(id: Int): Result<CharacterResponse.CharacterData>
 }

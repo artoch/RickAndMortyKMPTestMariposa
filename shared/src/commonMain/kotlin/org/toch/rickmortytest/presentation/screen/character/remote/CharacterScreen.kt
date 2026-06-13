@@ -5,6 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import kotlinx.coroutines.flow.flowOf
@@ -21,7 +22,9 @@ fun CharacterScreen(showSnackBar: (String) -> Unit) {
 
     val lazyCharacters = viewModel.charactersFlow.collectAsLazyPagingItems()
 
-    val favoriteOverrides by viewModel.favoriteOverrides.collectAsState()
+    val favoriteOverrides by viewModel.favoriteOverrides.collectAsStateWithLifecycle()
+
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
     CharacterObserver(viewModel) { sideEffect ->
         showSnackBar(sideEffect)
@@ -30,6 +33,8 @@ fun CharacterScreen(showSnackBar: (String) -> Unit) {
     CharacterContainer(
         lazyCharacters = lazyCharacters,
         favoriteOverrides = favoriteOverrides,
+        searchQuery = searchQuery,
+        onSearchQueryChange = viewModel::onSearchQueryChanged,
         onCharacterClick = viewModel::onCharacterClicked,
         onFavoriteClick = { character ->
             viewModel.toggleFavorite(character)
@@ -50,6 +55,8 @@ private fun CharacterDetailContentPreview(
     CharacterContainer(
         lazyCharacters = flowOf(pagingData).collectAsLazyPagingItems(),
         onCharacterClick = {},
-        onFavoriteClick = {}
+        onFavoriteClick = {},
+        searchQuery = "",
+        onSearchQueryChange = {}
     )
 }

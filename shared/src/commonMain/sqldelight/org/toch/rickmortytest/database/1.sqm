@@ -1,0 +1,24 @@
+-- 1. Tabla virtual para manejar la búsqueda FTS
+CREATE VIRTUAL TABLE CharacterSearchIndex USING fts4(
+    name,
+    content='CharacterEntity'
+);
+
+-- 2. TRIGGERS AUTOMÁTICOS
+
+-- Eliminar ítem antes de insertar (para prevenir duplicados por el INSERT OR REPLACE)
+CREATE TRIGGER character_before_insert BEFORE INSERT ON CharacterEntity BEGIN
+    DELETE FROM CharacterSearchIndex WHERE rowid = new.id;
+END;
+
+-- Insertar en el índice FTS después de insertar en la tabla real
+CREATE TRIGGER character_after_insert AFTER INSERT ON CharacterEntity BEGIN
+    INSERT INTO CharacterSearchIndex (rowid, name)
+    VALUES (new.id, new.name);
+END;
+
+-- 3. ¡MUY IMPORTANTE!
+-- Copia los nombres de los personajes que el usuario YA TIENE guardados en su app al nuevo índice.
+-- Si omites esto, los personajes antiguos no aparecerán en las búsquedas en tiempo real.
+INSERT INTO CharacterSearchIndex (rowid, name)
+SELECT id, name FROM CharacterEntity;
